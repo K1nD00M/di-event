@@ -1,17 +1,17 @@
 :root {
-  --dark:     #231508;
-  --gold:     #C09530;
-  --gold2:    #A07825;
-  --gold-bg:  rgba(192,149,48,.12);
-  --cream:    #FFFEF8;
-  --bg:       #FAF7F0;        /* основной фон светлых секций */
-  --bg-warm:  #EDE5D0;        /* фон бывших тёмных секций */
+  --dark:     #2A2420;
+  --gold:     #C4AA82;
+  --gold2:    #A89070;
+  --gold-bg:  rgba(196,170,130,.13);
+  --cream:    #FEFEFC;
+  --bg:       #F9F8F6;
+  --bg-warm:  #F2F0ED;
   --bg-card:  #FFFFFF;
   --white:    #FFFFFF;
-  --text:     #231508;
-  --muted:    #917A60;
-  --border:   #E2D8C4;
-  --shadow:   rgba(35,21,8,.10);
+  --text:     #2A2420;
+  --muted:    #9A8E82;
+  --border:   #E8E4DE;
+  --shadow:   rgba(42,36,32,.08);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -265,8 +265,8 @@ body { font-family: 'Inter', -apple-system, sans-serif; color: var(--text); back
 .strip-card:hover .card-reveal { max-height: 80px; opacity: 1; transform: translateY(0); }
 .card-title { font-size: .9rem; font-weight: 600; color: white; margin-bottom: .3rem; }
 .card-price { font-size: .76rem; color: var(--gold); }
-.ss-fade-top { position: absolute; top: 0; left: 0; right: 0; height: 160px; pointer-events: none; z-index: 20; background: linear-gradient(to bottom, var(--bg-warm) 30%, transparent 100%); }
-.ss-fade-bot { position: absolute; bottom: 0; left: 0; right: 0; height: 160px; pointer-events: none; z-index: 20; background: linear-gradient(to top, var(--bg-warm) 30%, transparent 100%); }
+.ss-fade-top { display: none; }
+.ss-fade-bot { display: none; }
 .ss-fade-l   { position: absolute; top: 0; bottom: 0; left: 0; width: 34vw; pointer-events: none; z-index: 20; background: linear-gradient(to right, var(--bg-warm) 60%, transparent 100%); }
 
 /* ── SITE HEADER (светлый) ── */

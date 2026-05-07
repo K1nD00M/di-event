@@ -6,7 +6,7 @@ import CaseModal, { CaseData } from '@/components/CaseModal'
 
 const LogoSvg = () => (
   <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:'100%',display:'block'}}>
-    <rect width="40" height="40" rx="9" fill="#C09530"/>
+    <rect width="40" height="40" rx="9" fill="#C4AA82"/>
     <text x="4" y="30" fontFamily="Georgia,serif" fontSize="27" fontWeight="400" fill="#fff">D</text>
     <text x="23" y="29" fontFamily="Georgia,serif" fontSize="18" fontWeight="300" fontStyle="italic" fill="#fff">i</text>
     <polygon points="31,4.5 32.2,1.5 33.5,4.5 36.5,5.8 33.5,7 32.2,10 31,7 28,5.8" fill="rgba(255,255,255,.65)"/>
@@ -14,42 +14,43 @@ const LogoSvg = () => (
   </svg>
 )
 
-const PEOPLE   = [10, 20, 30, 50, 80, 100, 150]
-const FOOD_PER: Record<string,number> = { buffet: 1200, banquet: 1800, pizza: 800, own: 1000 }
-const HOST_P: Record<string,number>   = { none: 0, host_2h: 15000, host_4h: 25000, dj: 15000, live: 30000, host_dj: 40000 }
-const FMT_COEF: Record<string,number> = { corporate: 1.0, wedding: 1.25, birthday: 1.0, gender: 1.0, kids: 0.85, teambuilding: 0.9 }
+const FOOD_PER: Record<string,number> = { none: 0, banquet: 1800, buffet: 1200, catering: 1000 }
 
 function fmt(n: number) { return Math.round(n).toLocaleString('ru-RU') + ' ₽' }
-function fmtRange(lo: number, hi: number) { return 'от ' + fmt(lo) + ' — до ' + fmt(hi) }
+function fmtRange(lo: number, _hi: number) { return 'от ' + fmt(lo) }
 
 interface CalcState {
-  format: string; food: string; host: string;
-  people: number; dur: number;
-  photo: boolean; decor: boolean; venue: boolean; outside: boolean;
+  people: string; food: string; dur: number;
+  host: boolean; dj: boolean; cover: boolean; photo: boolean; decor: boolean;
 }
 
 function calcTotal(S: CalcState) {
-  if (S.people >= 6) return null
-  const n = PEOPLE[S.people] || 30
-  const coef = FMT_COEF[S.format] || 1.0
-  const foodSub    = (FOOD_PER[S.food] || 0) * n
-  const hostSub    = HOST_P[S.host] || 0
-  const venueSub   = S.venue   ? 40000 + n * 300 : 0
-  const photoSub   = S.photo   ? 25000 : 0
-  const decorSub   = S.decor   ? 20000 + n * 100 : 0
-  const outsideSub = S.outside ? 15000 : 0
-  const sub   = (foodSub + hostSub + venueSub + photoSub + decorSub + outsideSub) * coef
-  const comm  = sub * 0.15
+  if (S.people === '150+') return null
+  const n = parseInt(S.people)
+  const isLarge = n >= 50
+  let hostCost = 0
+  if (S.host) {
+    hostCost = isLarge
+      ? (S.dur === 2 ? 25000 : S.dur === 3 ? 35000 : 45000)
+      : (S.dur === 2 ? 20000 : S.dur === 3 ? 30000 : 40000)
+  }
+  const foodCost  = (FOOD_PER[S.food] || 0) * n
+  const djCost    = S.dj    ? 10000 : 0
+  const coverCost = S.cover ? 80000 : 0
+  const photoCost = S.photo ? 25000 : 0
+  const decorCost = S.decor ? 20000 : 0
+  const sub  = foodCost + hostCost + djCost + coverCost + photoCost + decorCost
+  const comm = sub * 0.15
   const total = sub + comm
   const hi    = total * 1.15
   const lines: [string, string][] = []
-  if (foodSub > 0)    lines.push(['Питание', fmt(Math.round(foodSub * coef))])
-  if (hostSub > 0)    lines.push(['Ведущий / музыка', fmt(Math.round(hostSub * coef))])
-  if (venueSub > 0)   lines.push(['Аренда зала', fmt(Math.round(venueSub * coef))])
-  if (photoSub > 0)   lines.push(['Фотограф', fmt(Math.round(photoSub * coef))])
-  if (decorSub > 0)   lines.push(['Декор', fmt(Math.round(decorSub * coef))])
-  if (outsideSub > 0) lines.push(['Выезд за город', fmt(Math.round(outsideSub * coef))])
-  lines.push(['Наша координация (15%)', fmt(Math.round(comm))])
+  if (foodCost > 0)  lines.push(['Питание',     'от ' + fmt(Math.round(foodCost))])
+  if (hostCost > 0)  lines.push(['Ведущий',      'от ' + fmt(hostCost)])
+  if (djCost > 0)    lines.push(['Диджей',       'от ' + fmt(djCost)])
+  if (coverCost > 0) lines.push(['Кавер-группа', 'от ' + fmt(coverCost)])
+  if (photoCost > 0) lines.push(['Фотограф',     'от ' + fmt(photoCost)])
+  if (decorCost > 0) lines.push(['Декор',        'от ' + fmt(decorCost)])
+  lines.push(['Наша координация (15%)', 'от ' + fmt(Math.round(comm))])
   return { total, hi, lines }
 }
 
@@ -81,6 +82,13 @@ export default function Home() {
       description: 'Ростовые куклы, аквагрим и робот с шариками встречали юных художников. Танцевальные коллективы зажигали.\n\nГлавное чудо: рисунки участников на глазах у зала оживали на большом экране — благодаря ИИ. Мастер-класс по рисованию, драйвовый ведущий и трогательное награждение.\n\nДети поверили в волшебство. Рисунки дышали, робот дарил шары, а счастливые глаза победителей говорили громче любых слов.',
       photos: ['/tr_1.png','/tr_2.png','/tr_3.png','/tr_4.png','/tr_5.png','/tr_6.png','/tr_7.png','/tr_8.png'],
     },
+    zdorovo: {
+      tag: 'Тимбилдинг · Корпоратив',
+      title: '«Быть здоровым легко-2025»',
+      subtitle: 'Мокрые, охрипшие, но невероятно сплочённые',
+      description: 'Выездная баня, зумба, мастер-классы по смузи и правильному питанию. Кавер-группа, фотобудка, аквагрим. Для детей — настолки и верёвочный городок.\n\nТимбилдинг на ура: стрельба из лука, водный пейнтбол, надувное мультипрепятствие, шашки-выбивашки подушками и хоккей с нудлсами вместо клюшек.\n\nФинал — призы и счастливые, мокрые, охрипшие, но невероятно сплочённые команды.\n\nИтог: быть здоровым легко, когда вокруг свои.',
+      photos: ['/bz_1.png','/bz_2.png','/bz_3.png'],
+    },
   }
   const [headerVisible, setHeaderVisible] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -88,8 +96,8 @@ export default function Home() {
   const [calcFormVisible, setCalcFormVisible] = useState(false)
   const [calcStatus, setCalcStatus] = useState<'idle'|'loading'|'ok'|'err'>('idle')
   const [S, setS] = useState<CalcState>({
-    format: 'corporate', food: 'buffet', host: 'none',
-    people: 2, dur: 3, photo: false, decor: false, venue: false, outside: false
+    people: '20', food: 'none', dur: 2,
+    host: false, dj: false, cover: false, photo: false, decor: false
   })
 
   const stripsRef = useRef<HTMLDivElement>(null)
@@ -141,9 +149,9 @@ export default function Home() {
       ],
     ]
     const STRIP_CFG = [
-      { idx: 0, dir: 1,  speed: 0.28, vFact: 1.00, cardHRatio: 0.52 },
-      { idx: 1, dir: -1, speed: 0.32, vFact: 0.75, cardHRatio: 0.37 },
-      { idx: 2, dir: 1,  speed: 0.36, vFact: 1.30, cardHRatio: 0.36 },
+      { idx: 0, dir: 1,  speed: 0.12, vFact: 0.45, cardHRatio: 0.52 },
+      { idx: 1, dir: -1, speed: 0.14, vFact: 0.35, cardHRatio: 0.37 },
+      { idx: 2, dir: 1,  speed: 0.16, vFact: 0.55, cardHRatio: 0.36 },
     ]
     const GAP = 14
     let VH = window.innerHeight
@@ -202,21 +210,16 @@ export default function Home() {
   function handleTypeChange(t: 'business' | 'private') {
     setClientType(t)
     setTimeout(() => { document.getElementById(t === 'business' ? 'businessContent' : 'privateContent')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }, 60)
-    setS(prev => ({ ...prev, format: t === 'business' ? 'corporate' : 'birthday' }))
+    setS(prev => ({ ...prev }))
   }
 
   function openModalFromCalc() {
     if (!calcResult) return
-    const n = PEOPLE[S.people] || 30
     const totalStr = fmtRange(Math.round(calcResult.total / 1000) * 1000, Math.round(calcResult.hi / 1000) * 1000)
-    const FORMAT_LABELS: Record<string,string> = {
-      corporate:'Корпоратив', wedding:'Свадьба', birthday:'День рождения',
-      gender:'Гендер-пати', kids:'Детский праздник', teambuilding:'Тимбилдинг',
-    }
-    const parts = [`${FORMAT_LABELS[S.format] || S.format}`, `${n} чел.`, `${S.dur} ч`, totalStr]
+    const parts = [`${S.people} чел.`, `${S.dur} ч`, totalStr]
     setModalPrefill({
-      format: S.format,
-      guests_count: n,
+      format: 'corporate',
+      guests_count: parseInt(S.people) || 0,
       budget_range: totalStr,
       calc_summary: parts.join(' · '),
     })
@@ -224,7 +227,6 @@ export default function Home() {
   }
 
   const calcResult = calcTotal(S)
-  const peopleVal = PEOPLE[S.people] || 30
   const isBusiness = clientType === 'business'
   const scrollTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); setMenuOpen(false) }
 
@@ -262,11 +264,12 @@ export default function Home() {
         </button>
       </header>
 
+
       <button className="float-btn" onClick={() => setModalOpen(true)}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{width:16,height:16}}>
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
-        <span className="float-label">Обсудить проект</span>
+        <span className="float-label">Оставить заявку</span>
       </button>
 
       {/* HERO */}
@@ -310,10 +313,10 @@ export default function Home() {
           </div>
           <div className="services-grid">
             {[
-              { n:'01', title:'«Сами хотим отдохнуть»', desc:'Корпоратив для 20–80 человек. Берём на себя площадку, питание, программу и ведущего.', tag:'Корпоратив' },
-              { n:'02', title:'«Клиентский день без скуки»', desc:'Мероприятие для ваших клиентов. Деловая часть + нетворкинг + развлечения без провисаний.', tag:'Клиентское событие' },
-              { n:'03', title:'«Тимбилдинг, от которого не увольняются»', desc:'Активности, которые реально объединяют команду. Без принудительных обнимашек.', tag:'Тимбилдинг' },
-              { n:'04', title:'«Фуршет без головной боли»', desc:'Деловые приёмы, презентации и фуршеты под ключ. Кейтеринг, оформление, персонал.', tag:'Фуршет / приём' },
+              { n:'01', title:'Корпоратив', desc:'От 20 человек. Берём на себя площадку, питание, программу и ведущего.', tag:'Корпоратив' },
+              { n:'02', title:'Квиз', desc:'Живое общение вместо рабочих чатов. Ведущий, 40 вопросов, музыкальные паузы. Никакой теории — только смех до упада.', tag:'Клиентское событие' },
+              { n:'03', title:'Тимбилдинг', desc:'Укрепите командный дух без скучных лекций. Наши тимбилдинги работают на реальное взаимодействие и мотивацию.', tag:'Тимбилдинг' },
+              { n:'04', title:'«Деловые игры»', desc:'Деловые приёмы, презентации и фуршеты под ключ. Кейтеринг, оформление, персонал.', tag:'Фуршет / приём' },
             ].map(s => (
               <div key={s.n} className="srv-card">
                 <div className="srv-num">{s.n}</div>
@@ -325,6 +328,87 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="section section-light" id="calculator">
+          <div className="inner">
+            <div className="sec-head">
+              <div className="eyebrow">Открыто о деньгах</div>
+              <h2 className="sec-title">Рассчитайте стоимость</h2>
+              <p className="sec-sub">Укажите параметры — примерная цена обновляется мгновенно</p>
+            </div>
+            <div className="calc-wrap">
+              <div className="calc-controls">
+                <div className="calc-group">
+                  <div className="calc-label">Количество человек</div>
+                  <div className="calc-chips">
+                    {['20','50','80','100','150+'].map(v => (
+                      <button key={v} className={`calc-chip ${S.people===v?'active':''}`} onClick={() => setS(p=>({...p,people:v}))}>{v}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="calc-group">
+                  <div className="calc-label">Формат питания</div>
+                  <div className="calc-chips">
+                    {[['none','Без питания'],['banquet','Банкет'],['buffet','Фуршет'],['catering','Кейтеринг']].map(([v,l]) => (
+                      <button key={v} className={`calc-chip ${S.food===v?'active':''}`} onClick={() => setS(p=>({...p,food:v}))}>{l}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="calc-group">
+                  <div className="calc-label">Ведущий</div>
+                  <div className="calc-chips">
+                    <button className={`calc-chip ${!S.host?'active':''}`} onClick={() => setS(p=>({...p,host:false}))}>Без ведущего</button>
+                    <button className={`calc-chip ${S.host?'active':''}`} onClick={() => setS(p=>({...p,host:true}))}>С ведущим</button>
+                  </div>
+                </div>
+                {S.host && (
+                  <div className="calc-group">
+                    <div className="calc-label">Длительность</div>
+                    <div className="calc-chips">
+                      {([[2,'2 часа'],[3,'3 часа'],[4,'4 часа+']] as [number,string][]).map(([v,l]) => (
+                        <button key={v} className={`calc-chip ${S.dur===v?'active':''}`} onClick={() => setS(p=>({...p,dur:v}))}>{l}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="calc-group">
+                  <div className="calc-label">Дополнительно</div>
+                  <div className="calc-checks">
+                    {([['dj','Диджей (от 10 000 ₽)'],['cover','Кавер-группа (от 80 000 ₽)'],['photo','Фотограф'],['decor','Декор']] as [keyof CalcState, string][]).map(([k,label]) => (
+                      <label key={k} className="calc-check">
+                        <input type="checkbox" checked={S[k] as boolean} onChange={e => setS(p=>({...p,[k]:e.target.checked}))} style={{position:'absolute',opacity:0}}/>
+                        <span className="chk-box">{S[k] && <svg viewBox="0 0 12 12" style={{width:10,height:10,stroke:'white',fill:'none',strokeWidth:'2.8'}}><polyline points="2 6 5 9 10 3"/></svg>}</span>
+                        <span className="chk-lbl">{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="calc-result">
+                <div className="calc-result-inner">
+                  {S.people === '150+' ? (
+                    <>
+                      <div className="calc-msg">Для мероприятий 150+ человек подготовим индивидуальный расчёт — ответим в течение часа.</div>
+                      <button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Запросить расчёт</button>
+                    </>
+                  ) : !calcResult || calcResult.total < 5000 ? (
+                    <>
+                      <div className="calc-msg">Выберите параметры выше — примерная стоимость появится здесь.</div>
+                      <button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Бесплатная консультация</button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="calc-range">{fmtRange(Math.round(calcResult.total/1000)*1000, Math.round(calcResult.hi/1000)*1000)}</div>
+                      <div className="calc-lines">{calcResult.lines.map(([k,v]) => <div key={k} className="calc-line"><span>{k}</span><span>{v}</span></div>)}</div>
+                      <div className="calc-disclaimer">Итоговая стоимость уточняется после консультации</div>
+                      <button className="calc-cta" onClick={openModalFromCalc}>Обсудить проект →</button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="section section-dark">
           <div className="fears-inner">
             <div className="fears-left">
@@ -332,7 +416,7 @@ export default function Home() {
               <h2><strong>Давайте созвонимся</strong> на 10 минут</h2>
               <p>Если хотя бы один из пунктов справа звучит знакомо — вы попали по адресу.</p>
               <button className="fears-cta" onClick={() => setModalOpen(true)}>
-                Записаться на звонок <StepArrow />
+                Оставить заявку <StepArrow />
               </button>
             </div>
             <div className="fears-list">
@@ -370,6 +454,9 @@ export default function Home() {
             </div>
             <div className="case-card" style={{backgroundImage:"url('/tr_5.png')"}} onClick={() => setActiveCase(CASES.tramvai)}>
               <div className="case-body"><div className="case-tag">Детский праздник · Конкурс</div><div className="case-title">Конкурс рисунков «Трамваи на Неве»</div><div className="case-result">Робот · ИИ-анимация рисунков · аквагрим</div></div>
+            </div>
+            <div className="case-card" style={{backgroundImage:"url('/bz_1.png')"}} onClick={() => setActiveCase(CASES.zdorovo)}>
+              <div className="case-body"><div className="case-tag">Тимбилдинг · Корпоратив</div><div className="case-title">«Быть здоровым легко-2025»</div><div className="case-result">Баня · пейнтбол · стрельба из лука</div></div>
             </div>
           </div>
           <div className="cases-more"><button className="btn-outline" onClick={() => setModalOpen(true)}>Обсудить ваш проект →</button></div>
@@ -412,24 +499,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section section-dark">
-          <div className="fears-inner">
-            <div className="fears-left">
-              <div className="eyebrow" style={{color:'var(--gold)',opacity:.8,marginBottom:'.75rem'}}>Боитесь?</div>
-              <h2><strong>Что было в прошлый раз</strong> — не повторится</h2>
-              <p>Мы слышим это от каждого второго клиента. И знаем, как это исправить.</p>
-              <button className="fears-cta" onClick={() => setModalOpen(true)}>
-                Обсудить ваш праздник <StepArrow />
-              </button>
-            </div>
-            <div className="fears-list">
-              {['«В прошлый раз всё пошло не по плану, и переделывать было некогда»','«Боюсь, что будет дорого и непонятно, за что платить»','«Не знаю, с чего начать — площадка, ведущий, декор...»','«Хочу особенного, но не знаю, как объяснить это исполнителям»'].map((t,i) => (
-                <div key={i} className="fear-item"><FearCheck /><p>{t}</p></div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <section className="section section-light">
           <div className="sec-head"><div className="eyebrow">Процесс</div><h2 className="sec-title">5 шагов к вашему празднику</h2></div>
           <div className="steps-row steps-row-5">
@@ -451,6 +520,9 @@ export default function Home() {
             <div className="case-card" style={{backgroundImage:"url('/tr_5.png')"}} onClick={() => setActiveCase(CASES.tramvai)}>
               <div className="case-body"><div className="case-tag">Детский праздник · Конкурс</div><div className="case-title">Конкурс рисунков «Трамваи на Неве»</div><div className="case-result">Робот · ИИ-анимация рисунков · аквагрим</div></div>
             </div>
+            <div className="case-card" style={{backgroundImage:"url('/bz_1.png')"}} onClick={() => setActiveCase(CASES.zdorovo)}>
+              <div className="case-body"><div className="case-tag">Тимбилдинг · Корпоратив</div><div className="case-title">«Быть здоровым легко-2025»</div><div className="case-result">Баня · пейнтбол · стрельба из лука</div></div>
+            </div>
           </div>
           <div className="cases-more"><button className="btn-outline" onClick={() => setModalOpen(true)}>Обсудить ваш праздник →</button></div>
         </section>
@@ -471,96 +543,6 @@ export default function Home() {
       </div>
 
       {/* CALCULATOR */}
-      <section className="section section-light" id="calculator">
-        <div className="inner">
-          <div className="sec-head">
-            <div className="eyebrow">Открыто о деньгах</div>
-            <h2 className="sec-title">Рассчитайте стоимость</h2>
-            <p className="sec-sub">Укажите параметры — примерная цена обновляется мгновенно</p>
-          </div>
-          <div className="calc-wrap">
-            <div className="calc-controls">
-              <div className="calc-group">
-                <div className="calc-label">Формат мероприятия</div>
-                <div className="calc-chips">
-                  {[['corporate','Корпоратив'],['wedding','Свадьба'],['birthday','День рождения'],['gender','Гендер-пати'],['kids','Детский праздник'],['teambuilding','Тимбилдинг']].map(([v,l]) => (
-                    <button key={v} className={`calc-chip ${S.format===v?'active':''}`} onClick={() => setS(p=>({...p,format:v}))}>{l}</button>
-                  ))}
-                </div>
-              </div>
-              <div className="calc-group">
-                <div className="calc-label">Количество человек: <strong>{peopleVal}</strong></div>
-                <div className="calc-slider-wrap">
-                  <input type="range" className="calc-slider" min="0" max="6" value={S.people}
-                    style={{'--pct': `${(S.people/6*100).toFixed(1)}%`} as React.CSSProperties}
-                    onChange={e => setS(p=>({...p,people:+e.target.value}))}/>
-                  <div className="calc-slider-row"><span>10</span><span>20</span><span>30</span><span>50</span><span>80</span><span>100</span><span>150+</span></div>
-                </div>
-              </div>
-              <div className="calc-group">
-                <div className="calc-label">Формат питания</div>
-                <div className="calc-chips">
-                  {[['buffet','Фуршет'],['banquet','Банкет'],['pizza','Пицца'],['own','Свой вариант']].map(([v,l]) => (
-                    <button key={v} className={`calc-chip ${S.food===v?'active':''}`} onClick={() => setS(p=>({...p,food:v}))}>{l}</button>
-                  ))}
-                </div>
-              </div>
-              <div className="calc-group">
-                <div className="calc-label">Музыка и ведущий</div>
-                <div className="calc-chips">
-                  {[['none','Без ведущего'],['host_2h','Ведущий 2–3 ч'],['host_4h','Ведущий 4+ ч'],['dj','Диджей'],['live','Живая музыка'],['host_dj','Ведущий + DJ']].map(([v,l]) => (
-                    <button key={v} className={`calc-chip ${S.host===v?'active':''}`} onClick={() => setS(p=>({...p,host:v}))}>{l}</button>
-                  ))}
-                </div>
-              </div>
-              <div className="calc-group">
-                <div className="calc-label">Длительность: <strong>{S.dur}</strong> ч</div>
-                <div className="calc-slider-wrap">
-                  <input type="range" className="calc-slider" min="2" max="6" value={S.dur}
-                    style={{'--pct': `${((S.dur-2)/4*100).toFixed(1)}%`} as React.CSSProperties}
-                    onChange={e => setS(p=>({...p,dur:+e.target.value}))}/>
-                  <div className="calc-slider-row"><span>2 ч</span><span>3 ч</span><span>4 ч</span><span>5 ч</span><span>6 ч</span></div>
-                </div>
-              </div>
-              <div className="calc-group">
-                <div className="calc-label">Дополнительно</div>
-                <div className="calc-checks">
-                  {(['photo','decor','venue','outside'] as const).map(k => (
-                    <label key={k} className="calc-check">
-                      <input type="checkbox" checked={S[k]} onChange={e => setS(p=>({...p,[k]:e.target.checked}))} style={{position:'absolute',opacity:0}}/>
-                      <span className="chk-box">{S[k] && <svg viewBox="0 0 12 12" style={{width:10,height:10,stroke:'white',fill:'none',strokeWidth:'2.8'}}><polyline points="2 6 5 9 10 3"/></svg>}</span>
-                      <span className="chk-lbl">{{photo:'Фотограф',decor:'Декор',venue:'Аренда зала',outside:'Выезд за город'}[k]}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="calc-result">
-              <div className="calc-result-inner">
-                {S.people >= 6 ? (
-                  <>
-                    <div className="calc-msg">Для мероприятий 100+ человек подготовим индивидуальный расчёт — ответим в течение часа.</div>
-                    <button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Запросить расчёт</button>
-                  </>
-                ) : !calcResult || calcResult.total < 15000 ? (
-                  <>
-                    <div className="calc-msg">Для небольшого мероприятия предлагаем бесплатную консультацию.</div>
-                    <button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Бесплатная консультация</button>
-                  </>
-                ) : (
-                  <>
-                    <div className="calc-range">{fmtRange(Math.round(calcResult.total/1000)*1000, Math.round(calcResult.hi/1000)*1000)}</div>
-                    <div className="calc-lines">{calcResult.lines.map(([k,v]) => <div key={k} className="calc-line"><span>{k}</span><span>{v}</span></div>)}</div>
-                    <div className="calc-disclaimer">Итоговая стоимость уточняется после консультации</div>
-                    <button className="calc-cta" onClick={openModalFromCalc}>Обсудить проект →</button>
-                    <button className="calc-cta-sec" onClick={openModalFromCalc}>Уточнить смету</button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* PORTFOLIO */}
       <section className="slideshow" id="slideshow">
@@ -575,6 +557,42 @@ export default function Home() {
           <div className="ss-fade-top"/><div className="ss-fade-bot"/><div className="ss-fade-l"/>
         </div>
       </section>
+
+      <footer style={{
+        background: '#fff', borderTop: '1px solid #EBEBEB',
+        padding: '1.25rem 2rem',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        gap: '1.25rem',
+      }}>
+        <span style={{ fontSize: '.8rem', color: '#bbb', fontWeight: 500 }}>© Di Event 2026</span>
+        <div style={{ display: 'flex', gap: '.6rem', alignItems: 'center' }}>
+          <a href="https://t.me/K_ket1" target="_blank" rel="noopener noreferrer" aria-label="Telegram"
+             style={{ display: 'flex', opacity: 1, transition: 'opacity .15s' }}
+             onMouseOver={e => (e.currentTarget.style.opacity = '.7')}
+             onMouseOut={e => (e.currentTarget.style.opacity = '1')}>
+            <svg viewBox="0 0 24 24" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="12" fill="#26A5E4"/>
+              <path d="M17.5 7.08L5 11.6c-.8.33-.79.78-.15.98l3.16.98 7.3-4.58c.34-.21.66-.1.4.13l-5.9 5.33-.22 3.24.63-.3 1.51-1.46 3.15 2.31c.58.32.99.15 1.14-.53l2.06-9.7c.21-.85-.32-1.23-.88-.92z" fill="white"/>
+            </svg>
+          </a>
+          <a href="https://max.ru/" target="_blank" rel="noopener noreferrer" aria-label="Max"
+             style={{ display: 'flex', opacity: 1, transition: 'opacity .15s' }}
+             onMouseOver={e => (e.currentTarget.style.opacity = '.7')}
+             onMouseOut={e => (e.currentTarget.style.opacity = '1')}>
+            <svg viewBox="0 0 24 24" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="maxFGr" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#3D9BF7"/>
+                  <stop offset="100%" stopColor="#9B52EE"/>
+                </linearGradient>
+              </defs>
+              <rect width="24" height="24" rx="6" fill="url(#maxFGr)"/>
+              <path d="M12 3.5C7.3 3.5 3.5 7 3.5 11.3c0 2.4 1.1 4.5 2.9 5.9l-.9 3.8 3.8-1.8c.85.2 1.74.3 2.7.3 4.7 0 8.5-3.5 8.5-7.8S16.7 3.5 12 3.5Z" fill="white"/>
+              <circle cx="12" cy="11" r="3.3" fill="url(#maxFGr)"/>
+            </svg>
+          </a>
+        </div>
+      </footer>
 
       <ContactModal
         isOpen={modalOpen}

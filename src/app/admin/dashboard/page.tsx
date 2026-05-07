@@ -10,11 +10,11 @@ interface Lead {
   calc_summary: string; status: string;
 }
 
-const MESSENGER_ICONS: Record<string,string> = { telegram: '✈', whatsapp: '💬', email: '✉' }
-const MESSENGER_LABELS: Record<string,string> = { telegram: 'Telegram', whatsapp: 'WhatsApp', email: 'Email' }
+const MESSENGER_ICONS: Record<string,string> = { telegram: '✈', max: 'M', email: '✉' }
+const MESSENGER_LABELS: Record<string,string> = { telegram: 'Telegram', max: 'Max', email: 'Email' }
 
 const STATUS_LABELS: Record<string,string> = { new: 'Новая', in_progress: 'В работе', done: 'Готово', cancelled: 'Отменено' }
-const STATUS_COLORS: Record<string,string> = { new: '#BF9030', in_progress: '#2980b9', done: '#27ae60', cancelled: '#95a5a6' }
+const STATUS_COLORS: Record<string,string> = { new: '#C4AA82', in_progress: '#2980b9', done: '#27ae60', cancelled: '#95a5a6' }
 
 export default function Dashboard() {
   const [leads, setLeads] = useState<Lead[]>([])
@@ -84,7 +84,7 @@ export default function Dashboard() {
       <div style={{maxWidth:1200,margin:'0 auto',padding:'2rem'}}>
         {/* Stats */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'1rem',marginBottom:'2rem'}}>
-          {[['Всего заявок',counts.all,'#231508'],['Новые',counts.new,'#BF9030'],['В работе',counts.in_progress,'#2980b9'],['Закрыты',counts.done,'#27ae60']].map(([l,c,col]) => (
+          {[['Всего заявок',counts.all,'#231508'],['Новые',counts.new,'#C4AA82'],['В работе',counts.in_progress,'#2980b9'],['Закрыты',counts.done,'#27ae60']].map(([l,c,col]) => (
             <div key={l as string} style={{background:'white',borderRadius:14,padding:'1.25rem 1.5rem',border:'1px solid #E0D8C6'}}>
               <div style={{fontSize:'2rem',fontWeight:800,color:col as string,letterSpacing:'-.03em',lineHeight:1}}>{c as number}</div>
               <div style={{fontSize:'.72rem',color:'#7B6245',marginTop:'.3rem',textTransform:'uppercase',letterSpacing:'.1em'}}>{l as string}</div>
@@ -99,7 +99,7 @@ export default function Dashboard() {
             <div style={{padding:'1rem 1.5rem',borderBottom:'1px solid #E0D8C6',display:'flex',gap:'.5rem',flexWrap:'wrap'}}>
               {[['all','Все'],['new','Новые'],['in_progress','В работе'],['done','Готово'],['cancelled','Отменено']].map(([val,lbl]) => (
                 <button key={val} onClick={() => setFilter(val)}
-                  style={{padding:'.35rem .85rem',borderRadius:6,border:`1.5px solid ${filter===val?'#BF9030':'#D8D0BA'}`,background:filter===val?'rgba(191,144,48,.1)':'transparent',color:filter===val?'#A37828':'#7B6245',fontSize:'.78rem',fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
+                  style={{padding:'.35rem .85rem',borderRadius:6,border:`1.5px solid ${filter===val?'#C4AA82':'#D8D0BA'}`,background:filter===val?'rgba(196,170,130,.1)':'transparent',color:filter===val?'#A89070':'#7B6245',fontSize:'.78rem',fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
                   {lbl}
                 </button>
               ))}
@@ -125,12 +125,12 @@ export default function Dashboard() {
                 <tbody>
                   {filtered.map((lead, i) => (
                     <tr key={lead.id} onClick={() => setSelected(selected?.id===lead.id?null:lead)}
-                      style={{borderTop:'1px solid #F0EAD8',cursor:'pointer',background:selected?.id===lead.id?'rgba(191,144,48,.06)':'white',transition:'background .15s'}}>
+                      style={{borderTop:'1px solid #F0EAD8',cursor:'pointer',background:selected?.id===lead.id?'rgba(196,170,130,.06)':'white',transition:'background .15s'}}>
                       <td style={{padding:'.75rem 1rem',fontSize:'.75rem',color:'#7B6245'}}>{i+1}</td>
                       <td style={{padding:'.75rem 1rem',fontSize:'.75rem',color:'#7B6245',whiteSpace:'nowrap'}}>{lead.created_at.slice(0,16).replace('T',' ')}</td>
                       <td style={{padding:'.75rem 1rem',fontSize:'.85rem',fontWeight:600,color:'#2C1A08'}}>{lead.name}</td>
                       <td style={{padding:'.75rem 1rem'}}>
-                        <span style={{display:'inline-flex',alignItems:'center',gap:'.35rem',fontSize:'.72rem',fontWeight:700,color:'#A37828',background:'rgba(191,144,48,.1)',padding:'.22rem .6rem',borderRadius:5}}>
+                        <span style={{display:'inline-flex',alignItems:'center',gap:'.35rem',fontSize:'.72rem',fontWeight:700,color:'#A89070',background:'rgba(196,170,130,.1)',padding:'.22rem .6rem',borderRadius:5}}>
                           <span>{MESSENGER_ICONS[lead.contact_method] || '📞'}</span>
                           {MESSENGER_LABELS[lead.contact_method] || lead.contact_method}
                         </span>
@@ -166,10 +166,10 @@ export default function Dashboard() {
               </div>
 
               {/* Контакт */}
-              <div style={{marginBottom:'.75rem',background:'rgba(191,144,48,.06)',border:'1px solid rgba(191,144,48,.2)',borderRadius:10,padding:'.85rem 1rem'}}>
+              <div style={{marginBottom:'.75rem',background:'rgba(196,170,130,.06)',border:'1px solid rgba(196,170,130,.2)',borderRadius:10,padding:'.85rem 1rem'}}>
                 <div style={{display:'flex',alignItems:'center',gap:'.5rem',marginBottom:'.3rem'}}>
                   <span style={{fontSize:'1rem'}}>{MESSENGER_ICONS[selected.contact_method] || '📞'}</span>
-                  <span style={{fontSize:'.65rem',fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',color:'#A37828'}}>{MESSENGER_LABELS[selected.contact_method] || selected.contact_method}</span>
+                  <span style={{fontSize:'.65rem',fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',color:'#A89070'}}>{MESSENGER_LABELS[selected.contact_method] || selected.contact_method}</span>
                 </div>
                 <div style={{fontSize:'.95rem',fontWeight:700,color:'#2C1A08'}}>{selected.contact_value}</div>
               </div>
@@ -220,12 +220,12 @@ export default function Dashboard() {
               <div style={{display:'flex',gap:'.75rem',marginTop:'1.25rem'}}>
                 {selected.contact_method === 'email' ? (
                   <a href={`mailto:${selected.contact_value}`} style={{flex:1,padding:'.65rem',background:'#C09530',color:'white',borderRadius:8,textAlign:'center',textDecoration:'none',fontSize:'.82rem',fontWeight:600}}>✉ Написать</a>
-                ) : selected.contact_method === 'whatsapp' ? (
-                  <a href={`https://wa.me/${selected.contact_value.replace(/\D/g,'')}`} target="_blank" style={{flex:1,padding:'.65rem',background:'#25D366',color:'white',borderRadius:8,textAlign:'center',textDecoration:'none',fontSize:'.82rem',fontWeight:600}}>💬 WhatsApp</a>
+                ) : selected.contact_method === 'max' ? (
+                  <a href={`https://max.ru/im?sel=${selected.contact_value.replace(/\D/g,'')}`} target="_blank" style={{flex:1,padding:'.65rem',background:'linear-gradient(135deg,#3D9BF7,#9B52EE)',color:'white',borderRadius:8,textAlign:'center',textDecoration:'none',fontSize:'.82rem',fontWeight:600}}>M Max</a>
                 ) : (
                   <a href={`https://t.me/${selected.contact_value.replace('@','').replace(/\D/g,d => d==='@'?'@':'')}`} target="_blank" style={{flex:1,padding:'.65rem',background:'#2AABEE',color:'white',borderRadius:8,textAlign:'center',textDecoration:'none',fontSize:'.82rem',fontWeight:600}}>✈ Telegram</a>
                 )}
-                <a href={`tel:${selected.contact_value.replace(/[^\d+]/g,'')}`} style={{flex:1,padding:'.65rem',background:'rgba(191,144,48,.12)',color:'#A37828',border:'1px solid rgba(191,144,48,.3)',borderRadius:8,textAlign:'center',textDecoration:'none',fontSize:'.82rem',fontWeight:600}}>📞 Позвонить</a>
+                <a href={`tel:${selected.contact_value.replace(/[^\d+]/g,'')}`} style={{flex:1,padding:'.65rem',background:'rgba(196,170,130,.12)',color:'#A89070',border:'1px solid rgba(196,170,130,.3)',borderRadius:8,textAlign:'center',textDecoration:'none',fontSize:'.82rem',fontWeight:600}}>📞 Позвонить</a>
               </div>
             </div>
           )}

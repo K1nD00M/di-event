@@ -119,7 +119,7 @@ export default function CaseModal({ case_, onClose }: Props) {
                 onClick={() => goTo(i)}
                 style={{
                   width: i === idx ? 22 : 7, height: 7, borderRadius: 4,
-                  background: i === idx ? '#C09530' : 'rgba(255,255,255,.55)',
+                  background: i === idx ? '#C4AA82' : 'rgba(255,255,255,.55)',
                   border: 'none', cursor: 'pointer', padding: 0,
                   transition: 'width .25s, background .25s',
                 }}
@@ -153,7 +153,7 @@ export default function CaseModal({ case_, onClose }: Props) {
         <div style={{ padding: '1.5rem 2rem 2rem', overflowY: 'auto' }}>
           <div style={{
             fontSize: '.62rem', fontWeight: 700, letterSpacing: '.18em',
-            textTransform: 'uppercase', color: '#C09530', marginBottom: '.5rem',
+            textTransform: 'uppercase', color: '#C4AA82', marginBottom: '.5rem',
           }}>
             {case_.tag}
           </div>

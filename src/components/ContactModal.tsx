@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const EVENT_TYPES_BUSINESS = ['Корпоратив', 'Тимбилдинг', 'Клиентское событие', 'Фуршет / приём', 'Другое']
 const EVENT_TYPES_PRIVATE  = ['Свадьба', 'День рождения', 'Гендер-пати', 'Детский праздник', 'Другое']
@@ -27,18 +27,39 @@ interface Props {
   prefill?: CalcPrefill | null
 }
 
-type ContactMethod = 'telegram' | 'whatsapp' | 'email'
+type ContactMethod = 'telegram' | 'max' | 'email'
 
-const MESSENGERS: { id: ContactMethod; label: string; icon: string; placeholder: string; hint: string }[] = [
-  { id: 'telegram', label: 'Telegram',  icon: '✈', placeholder: '@username или +7 (999) 000-00-00', hint: 'Напишем первыми' },
-  { id: 'whatsapp', label: 'WhatsApp',  icon: '💬', placeholder: '+7 (999) 000-00-00', hint: 'Пришлём сообщение' },
-  { id: 'email',    label: 'Email',     icon: '✉', placeholder: 'example@mail.ru', hint: 'Ответим в течение часа' },
+const TgIcon = () => (
+  <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="12" fill="#26A5E4"/>
+    <path d="M17.5 7.08L5 11.6c-.8.33-.79.78-.15.98l3.16.98 7.3-4.58c.34-.21.66-.1.4.13l-5.9 5.33-.22 3.24.63-.3 1.51-1.46 3.15 2.31c.58.32.99.15 1.14-.53l2.06-9.7c.21-.85-.32-1.23-.88-.92z" fill="white"/>
+  </svg>
+)
+
+const MaxIcon = () => (
+  <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="maxGr" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0%" stopColor="#3D9BF7"/>
+        <stop offset="100%" stopColor="#9B52EE"/>
+      </linearGradient>
+    </defs>
+    <rect width="24" height="24" rx="6" fill="url(#maxGr)"/>
+    <path d="M12 3.5C7.3 3.5 3.5 7 3.5 11.3c0 2.4 1.1 4.5 2.9 5.9l-.9 3.8 3.8-1.8c.85.2 1.74.3 2.7.3 4.7 0 8.5-3.5 8.5-7.8S16.7 3.5 12 3.5Z" fill="white"/>
+    <circle cx="12" cy="11" r="3.3" fill="url(#maxGr)"/>
+  </svg>
+)
+
+const MESSENGERS: { id: ContactMethod; label: string; icon: React.ReactNode; placeholder: string; hint: string }[] = [
+  { id: 'telegram', label: 'Telegram', icon: <TgIcon />,  placeholder: '@username или +7 (999) 000-00-00', hint: 'Напишем первыми' },
+  { id: 'max',      label: 'Max',      icon: <MaxIcon />, placeholder: '+7 (999) 000-00-00', hint: 'Пришлём сообщение' },
+  { id: 'email',    label: 'Email',    icon: '✉',         placeholder: 'example@mail.ru', hint: 'Ответим в течение часа' },
 ]
 
 export default function ContactModal({ isOpen, onClose, defaultType = 'business', prefill }: Props) {
   const [form, setForm] = useState({
     name: '',
-    contact_method: 'telegram' as ContactMethod,
+    contact_method: 'telegram' as ContactMethod,  // default
     contact_value: '',
     client_type: defaultType as string,
     event_type: '',
