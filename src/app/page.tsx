@@ -253,9 +253,9 @@ export default function Home() {
         </a>
         <nav className={`hdr-nav ${menuOpen ? 'open' : ''}`}>
           <a href="#about" onClick={e => { e.preventDefault(); scrollTo('about') }}>О нас</a>
-          <a href="#slideshow" onClick={e => { e.preventDefault(); scrollTo('slideshow') }}>Портфолио</a>
           <a href="#services" onClick={e => { e.preventDefault(); scrollTo('services') }}>Услуги</a>
           <a href="#calculator" onClick={e => { e.preventDefault(); scrollTo('calculator') }}>Цены</a>
+          <a href="#slideshow" onClick={e => { e.preventDefault(); scrollTo('slideshow') }}>Портфолио</a>
           <button className="hdr-cta" onClick={() => { setModalOpen(true); setMenuOpen(false) }}>Обсудить проект</button>
           <button className="hdr-cta-m" onClick={() => { setModalOpen(true); setMenuOpen(false) }}>Обсудить проект</button>
         </nav>
@@ -558,39 +558,62 @@ export default function Home() {
         </div>
       </section>
 
-      <footer style={{
-        background: '#fff', borderTop: '1px solid #EBEBEB',
-        padding: '1.25rem 2rem',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        gap: '1.25rem',
-      }}>
-        <span style={{ fontSize: '.8rem', color: '#bbb', fontWeight: 500 }}>© Di Event 2026</span>
-        <div style={{ display: 'flex', gap: '.6rem', alignItems: 'center' }}>
-          <a href="https://t.me/K_ket1" target="_blank" rel="noopener noreferrer" aria-label="Telegram"
-             style={{ display: 'flex', opacity: 1, transition: 'opacity .15s' }}
-             onMouseOver={e => (e.currentTarget.style.opacity = '.7')}
-             onMouseOut={e => (e.currentTarget.style.opacity = '1')}>
-            <svg viewBox="0 0 24 24" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="12" fill="#26A5E4"/>
-              <path d="M17.5 7.08L5 11.6c-.8.33-.79.78-.15.98l3.16.98 7.3-4.58c.34-.21.66-.1.4.13l-5.9 5.33-.22 3.24.63-.3 1.51-1.46 3.15 2.31c.58.32.99.15 1.14-.53l2.06-9.7c.21-.85-.32-1.23-.88-.92z" fill="white"/>
-            </svg>
-          </a>
-          <a href="https://max.ru/" target="_blank" rel="noopener noreferrer" aria-label="Max"
-             style={{ display: 'flex', opacity: 1, transition: 'opacity .15s' }}
-             onMouseOver={e => (e.currentTarget.style.opacity = '.7')}
-             onMouseOut={e => (e.currentTarget.style.opacity = '1')}>
-            <svg viewBox="0 0 24 24" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="maxFGr" x1="0" y1="1" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#3D9BF7"/>
-                  <stop offset="100%" stopColor="#9B52EE"/>
-                </linearGradient>
-              </defs>
-              <rect width="24" height="24" rx="6" fill="url(#maxFGr)"/>
-              <path d="M12 3.5C7.3 3.5 3.5 7 3.5 11.3c0 2.4 1.1 4.5 2.9 5.9l-.9 3.8 3.8-1.8c.85.2 1.74.3 2.7.3 4.7 0 8.5-3.5 8.5-7.8S16.7 3.5 12 3.5Z" fill="white"/>
-              <circle cx="12" cy="11" r="3.3" fill="url(#maxFGr)"/>
-            </svg>
-          </a>
+      <footer className="site-footer">
+        <div className="site-footer-inner">
+          {/* Brand */}
+          <div className="footer-col">
+            <div className="footer-logo">
+              <div style={{width:36,height:36,flexShrink:0}}><LogoSvg/></div>
+              <div>
+                <div className="footer-brand-name">Di Event</div>
+                <div className="footer-brand-sub">Event Agency</div>
+              </div>
+            </div>
+            <p className="footer-desc">Организуем корпоративы, квизы, тимбилдинги и праздники под ключ в Санкт-Петербурге.</p>
+            <div className="footer-socials">
+              <a href="https://t.me/K_ket1" target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="footer-social-link">
+                <svg viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="12" fill="#26A5E4"/>
+                  <path d="M17.5 7.08L5 11.6c-.8.33-.79.78-.15.98l3.16.98 7.3-4.58c.34-.21.66-.1.4.13l-5.9 5.33-.22 3.24.63-.3 1.51-1.46 3.15 2.31c.58.32.99.15 1.14-.53l2.06-9.7c.21-.85-.32-1.23-.88-.92z" fill="white"/>
+                </svg>
+              </a>
+              <a href="https://max.ru/" target="_blank" rel="noopener noreferrer" aria-label="Max" className="footer-social-link">
+                <svg viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="maxFGr" x1="0" y1="1" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#3D9BF7"/>
+                      <stop offset="100%" stopColor="#9B52EE"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="24" height="24" rx="6" fill="url(#maxFGr)"/>
+                  <path d="M12 3.5C7.3 3.5 3.5 7 3.5 11.3c0 2.4 1.1 4.5 2.9 5.9l-.9 3.8 3.8-1.8c.85.2 1.74.3 2.7.3 4.7 0 8.5-3.5 8.5-7.8S16.7 3.5 12 3.5Z" fill="white"/>
+                  <circle cx="12" cy="11" r="3.3" fill="url(#maxFGr)"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="footer-col">
+            <div className="footer-col-title">Навигация</div>
+            <nav className="footer-nav">
+              <a onClick={() => scrollTo('about')}>О нас</a>
+              <a onClick={() => scrollTo('services')}>Услуги</a>
+              <a onClick={() => scrollTo('calculator')}>Рассчитать стоимость</a>
+              <a onClick={() => scrollTo('slideshow')}>Портфолио</a>
+            </nav>
+          </div>
+
+          {/* CTA */}
+          <div className="footer-col">
+            <div className="footer-col-title">Обсудить мероприятие</div>
+            <p className="footer-desc">Ответим в течение 15 минут и подберём формат под ваш бюджет.</p>
+            <button className="footer-cta" onClick={() => setModalOpen(true)}>Оставить заявку →</button>
+          </div>
+        </div>
+
+        <div className="footer-bottom">
+          <span>© Di Event 2026 · Санкт-Петербург</span>
         </div>
       </footer>
 
