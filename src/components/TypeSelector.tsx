@@ -9,11 +9,6 @@ interface Props {
 export default function TypeSelector({ active, onChange, onContactClick }: Props) {
   return (
     <div>
-      <div className="selector-label">
-        <span className="selector-label-icon">⬇</span>
-        Выберите, кто вы — и мы покажем именно то, что нужно вам
-      </div>
-
       <div className="selector-cards">
         <button
           className={`sel-card ${active === 'business' ? 'active' : ''}`}
@@ -54,19 +49,6 @@ export default function TypeSelector({ active, onChange, onContactClick }: Props
 
       <div className="selector-hint">
         Нажмите на карточку — страница изменится под вас
-      </div>
-
-      <div className="about-story">
-        <div className="about-story-quote">&ldquo;</div>
-        <div>
-          <p className="about-story-text">
-            Наша первая компания названа в честь самого вдохновляющего человека — дочери. Это больше, чем бизнес:
-            это дело жизни, которое мы растим как своего ребёнка. Всё началось с детских праздников для маленькой Ди...
-            А потом мы поняли главное: настоящий праздник нужен каждому. Взрослым — даже больше, чем детям.
-            Позвольте и себе почувствовать то самое забытое чудо.
-          </p>
-          <div className="about-story-sig">— Основатель Di Event</div>
-        </div>
       </div>
     </div>
   )

@@ -31,7 +31,7 @@ export default function AdminLogin() {
         <div style={{textAlign:'center',marginBottom:'2rem'}}>
           <div style={{width:56,height:56,background:'#C09530',borderRadius:12,margin:'0 auto 1rem',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.5rem',color:'#FFFFFF',fontFamily:'Georgia,serif',fontWeight:400}}>Di</div>
           <h1 style={{fontSize:'1.4rem',fontWeight:800,color:'#231508',letterSpacing:'-.03em',marginBottom:'.3rem'}}>Панель управления</h1>
-          <p style={{fontSize:'.85rem',color:'#917A60'}}>Di Event · Административный доступ</p>
+          <p style={{fontSize:'.85rem',color:'#917A60'}}>Dialife Event · Административный доступ</p>
         </div>
         <form onSubmit={submit}>
           <div style={{marginBottom:'1rem'}}>

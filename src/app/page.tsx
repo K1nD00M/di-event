@@ -4,14 +4,13 @@ import TypeSelector from '@/components/TypeSelector'
 import ContactModal, { CalcPrefill } from '@/components/ContactModal'
 import CaseModal, { CaseData } from '@/components/CaseModal'
 
-const LogoSvg = () => (
-  <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:'100%',display:'block'}}>
-    <rect width="40" height="40" rx="9" fill="#C4AA82"/>
-    <text x="4" y="30" fontFamily="Georgia,serif" fontSize="27" fontWeight="400" fill="#fff">D</text>
-    <text x="23" y="29" fontFamily="Georgia,serif" fontSize="18" fontWeight="300" fontStyle="italic" fill="#fff">i</text>
-    <polygon points="31,4.5 32.2,1.5 33.5,4.5 36.5,5.8 33.5,7 32.2,10 31,7 28,5.8" fill="rgba(255,255,255,.65)"/>
-    <polygon points="10,9 10.8,7 11.6,9 13.5,9.8 11.6,10.6 10.8,12.5 10,10.6 8,9.8" fill="rgba(255,255,255,.4)"/>
-  </svg>
+const LogoImg = ({ white, className }: { white?: boolean; className?: string }) => (
+  <img
+    src="/logo.png"
+    alt="DIALIFE EVENT"
+    className={className}
+    style={white ? { filter: 'invert(1)' } : undefined}
+  />
 )
 
 const FOOD_PER: Record<string,number> = { none: 0, banquet: 1800, buffet: 1200, catering: 1000 }
@@ -228,7 +227,13 @@ export default function Home() {
 
   const calcResult = calcTotal(S)
   const isBusiness = clientType === 'business'
-  const scrollTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); setMenuOpen(false) }
+  const scrollTo = (id: string) => {
+    const target = id === 'calculator'
+      ? document.getElementById(isBusiness ? 'calculator-b' : 'calculator-p')
+      : document.getElementById(id)
+    target?.scrollIntoView({ behavior: 'smooth' })
+    setMenuOpen(false)
+  }
 
   const FearCheck = () => (
     <div className="fear-check">
@@ -248,8 +253,7 @@ export default function Home() {
     <>
       <header className={`site-header ${headerVisible ? 'visible' : ''}`}>
         <a href="#hero" className="logo" onClick={e => { e.preventDefault(); scrollTo('hero') }}>
-          <div className="logo-mark"><LogoSvg /></div>
-          <div><div className="logo-name">Di Event</div><div className="logo-sub">Event Agency</div></div>
+          <LogoImg className="logo-img" />
         </a>
         <nav className={`hdr-nav ${menuOpen ? 'open' : ''}`}>
           <a href="#about" onClick={e => { e.preventDefault(); scrollTo('about') }}>О нас</a>
@@ -277,8 +281,7 @@ export default function Home() {
         <div className="hero-bg"/>
         <div className="hero-overlay"/>
         <div className="hero-center">
-          <div className="hero-mark"><LogoSvg /></div>
-          <h1 className="hero-brand">Di Event</h1>
+          <LogoImg white className="hero-logo-img" />
           <p className="hero-tagline">Event Agency</p>
           <div className="hero-divider"/>
           <p className="hero-city">Санкт-Петербург</p>
@@ -286,7 +289,7 @@ export default function Home() {
         <div className="hero-scroll"><div className="hero-scroll-line"/>scroll</div>
       </section>
 
-      {/* ABOUT + SELECTOR */}
+      {/* ABOUT */}
       <section className="about" id="about">
         <div className="about-inner">
           <div className="about-text">
@@ -298,6 +301,31 @@ export default function Home() {
               <div className="astat"><div className="num">5 лет</div><div className="lbl">На рынке</div></div>
               <div className="astat"><div className="num">98%</div><div className="lbl">Рекомендуют</div></div>
             </div>
+            <div className="about-story">
+              <div className="about-story-quote">&ldquo;</div>
+              <div>
+                <p className="about-story-text">
+                  Наша первая компания названа в честь самого вдохновляющего человека — дочери. Это больше, чем бизнес:
+                  это дело жизни, которое мы растим как своего ребёнка. Всё началось с детских праздников для маленькой Ди...
+                  А потом мы поняли главное: настоящий праздник нужен каждому. Взрослым — даже больше, чем детям.
+                  Позвольте и себе почувствовать то самое забытое чудо.
+                </p>
+                <div className="about-story-sig">— Основатель Dialife Event</div>
+              </div>
+            </div>
+          </div>
+          <div className="about-photo-wrap">
+            <img src="/about-photo.jpg" alt="О нас" className="about-photo" />
+          </div>
+        </div>
+      </section>
+
+      {/* SELECTOR */}
+      <section className="selector-section">
+        <div className="selector-section-inner">
+          <div className="selector-intro">
+            <div className="selector-intro-title">ВЫБЕРИТЕ, КТО ВЫ —</div>
+            <div className="selector-intro-sub">и мы покажем именно то, что нужно вам</div>
           </div>
           <TypeSelector active={clientType} onChange={handleTypeChange} onContactClick={() => setModalOpen(true)} />
         </div>
@@ -318,7 +346,7 @@ export default function Home() {
               { n:'03', title:'Тимбилдинг', desc:'Укрепите командный дух без скучных лекций. Наши тимбилдинги работают на реальное взаимодействие и мотивацию.', tag:'Тимбилдинг' },
               { n:'04', title:'«Деловые игры»', desc:'Деловые приёмы, презентации и фуршеты под ключ. Кейтеринг, оформление, персонал.', tag:'Фуршет / приём' },
             ].map(s => (
-              <div key={s.n} className="srv-card">
+              <div key={s.n} className="srv-card" data-n={s.n}>
                 <div className="srv-num">{s.n}</div>
                 <div className="srv-title">{s.title}</div>
                 <div className="srv-desc">{s.desc}</div>
@@ -328,7 +356,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section section-light" id="calculator">
+        <section className="section section-light" id="calculator-b">
           <div className="inner">
             <div className="sec-head">
               <div className="eyebrow">Открыто о деньгах</div>
@@ -348,7 +376,7 @@ export default function Home() {
                 <div className="calc-group">
                   <div className="calc-label">Формат питания</div>
                   <div className="calc-chips">
-                    {[['none','Без питания'],['banquet','Банкет'],['buffet','Фуршет'],['catering','Кейтеринг']].map(([v,l]) => (
+                    {[['banquet','Банкет'],['buffet','Фуршет'],['catering','Кейтеринг']].map(([v,l]) => (
                       <button key={v} className={`calc-chip ${S.food===v?'active':''}`} onClick={() => setS(p=>({...p,food:v}))}>{l}</button>
                     ))}
                   </div>
@@ -386,22 +414,11 @@ export default function Home() {
               <div className="calc-result">
                 <div className="calc-result-inner">
                   {S.people === '150+' ? (
-                    <>
-                      <div className="calc-msg">Для мероприятий 150+ человек подготовим индивидуальный расчёт — ответим в течение часа.</div>
-                      <button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Запросить расчёт</button>
-                    </>
+                    <><div className="calc-msg">Для мероприятий 150+ человек подготовим индивидуальный расчёт — ответим в течение часа.</div><button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Запросить расчёт</button></>
                   ) : !calcResult || calcResult.total < 5000 ? (
-                    <>
-                      <div className="calc-msg">Выберите параметры выше — примерная стоимость появится здесь.</div>
-                      <button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Бесплатная консультация</button>
-                    </>
+                    <><div className="calc-msg">Выберите параметры выше — примерная стоимость появится здесь.</div><button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Бесплатная консультация</button></>
                   ) : (
-                    <>
-                      <div className="calc-range">{fmtRange(Math.round(calcResult.total/1000)*1000, Math.round(calcResult.hi/1000)*1000)}</div>
-                      <div className="calc-lines">{calcResult.lines.map(([k,v]) => <div key={k} className="calc-line"><span>{k}</span><span>{v}</span></div>)}</div>
-                      <div className="calc-disclaimer">Итоговая стоимость уточняется после консультации</div>
-                      <button className="calc-cta" onClick={openModalFromCalc}>Обсудить проект →</button>
-                    </>
+                    <><div className="calc-range">{fmtRange(Math.round(calcResult.total/1000)*1000, Math.round(calcResult.hi/1000)*1000)}</div><div className="calc-lines">{calcResult.lines.map(([k,v]) => <div key={k} className="calc-line"><span>{k}</span><span>{v}</span></div>)}</div><div className="calc-disclaimer">Итоговая стоимость уточняется после консультации</div><button className="calc-cta" onClick={openModalFromCalc}>Обсудить проект →</button></>
                   )}
                 </div>
               </div>
@@ -430,12 +447,15 @@ export default function Home() {
         <section className="section section-light">
           <div className="sec-head">
             <div className="eyebrow">Процесс</div>
-            <h2 className="sec-title">Как мы работаем</h2>
-            <p className="sec-sub">Четыре шага от первого звонка до вашего события</p>
+            <h2 className="sec-title">5 шагов к вашему мероприятию</h2>
           </div>
-          <div className="steps-row steps-row-4">
-            {[['01','Звонок 10 минут','Рассказываете задачу, мы задаём вопросы.'],['02','Концепция за 24 ч','Смета и три варианта концепции. Без сюрпризов.'],['03','Мы работаем','Координируем всё. Вы занимаетесь бизнесом.'],['04','Вы наслаждаетесь','В день события мы на месте. Вы — среди гостей.']].map(([n,t,d]) => (
-              <div key={n} className="step"><div className="step-num">{n}</div><div className="step-title">{t}</div><div className="step-desc">{d}</div></div>
+          <div className="steps-row steps-row-5">
+            {[['01','Звонок 10 минут','Рассказываете задачу, мы задаём вопросы.'],['02','Концепция за 24 ч','Смета и три варианта концепции. Без сюрпризов.'],['03','Согласование','Площадка, команда, декор — утверждаем вместе.'],['04','Мы работаем','Координируем всё. Вы занимаетесь бизнесом.'],['05','Вы наслаждаетесь','В день события мы на месте. Вы — среди гостей.']].map(([n,t,d]) => (
+              <div key={n} className="step">
+                <div className="step-num">{n}</div>
+                <div className="step-title">{t}</div>
+                <div className="step-desc">{d}</div>
+              </div>
             ))}
           </div>
         </section>
@@ -443,7 +463,7 @@ export default function Home() {
         <section className="section section-white" id="cases-b">
           <div className="sec-head">
             <div className="eyebrow">Кейсы</div>
-            <h2 className="sec-title">Реальные проекты</h2>
+            <h2 className="sec-title">История наших клиентов</h2>
           </div>
           <div className="cases-grid cases-grid-2">
             <div className="case-card" style={{backgroundImage:"url('/kc_7.png')"}} onClick={() => setActiveCase(CASES.krasStrelа)}>
@@ -492,10 +512,80 @@ export default function Home() {
               { n:'03', title:'Гендер-пати без инфоповода для ссоры', desc:'Тёплый праздник для близких. Декор, угощения и небольшая программа.', tag:'Гендер-пати' },
               { n:'04', title:'Детский праздник без истерик', desc:'Дети в восторге, родители отдыхают. Аниматоры, программа, торт.', tag:'Детский праздник' },
             ].map(s => (
-              <div key={s.n} className="srv-card">
+              <div key={s.n} className="srv-card" data-n={s.n}>
                 <div className="srv-num">{s.n}</div><div className="srv-title">{s.title}</div><div className="srv-desc">{s.desc}</div><span className="srv-tag">{s.tag}</span>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="section section-light" id="calculator-p">
+          <div className="inner">
+            <div className="sec-head">
+              <div className="eyebrow">Открыто о деньгах</div>
+              <h2 className="sec-title">Рассчитайте стоимость</h2>
+              <p className="sec-sub">Укажите параметры — примерная цена обновляется мгновенно</p>
+            </div>
+            <div className="calc-wrap">
+              <div className="calc-controls">
+                <div className="calc-group">
+                  <div className="calc-label">Количество человек</div>
+                  <div className="calc-chips">
+                    {['20','50','80','100','150+'].map(v => (
+                      <button key={v} className={`calc-chip ${S.people===v?'active':''}`} onClick={() => setS(p=>({...p,people:v}))}>{v}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="calc-group">
+                  <div className="calc-label">Формат питания</div>
+                  <div className="calc-chips">
+                    {[['banquet','Банкет'],['buffet','Фуршет'],['catering','Кейтеринг']].map(([v,l]) => (
+                      <button key={v} className={`calc-chip ${S.food===v?'active':''}`} onClick={() => setS(p=>({...p,food:v}))}>{l}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="calc-group">
+                  <div className="calc-label">Ведущий</div>
+                  <div className="calc-chips">
+                    <button className={`calc-chip ${!S.host?'active':''}`} onClick={() => setS(p=>({...p,host:false}))}>Без ведущего</button>
+                    <button className={`calc-chip ${S.host?'active':''}`} onClick={() => setS(p=>({...p,host:true}))}>С ведущим</button>
+                  </div>
+                </div>
+                {S.host && (
+                  <div className="calc-group">
+                    <div className="calc-label">Длительность</div>
+                    <div className="calc-chips">
+                      {([[2,'2 часа'],[3,'3 часа'],[4,'4 часа+']] as [number,string][]).map(([v,l]) => (
+                        <button key={v} className={`calc-chip ${S.dur===v?'active':''}`} onClick={() => setS(p=>({...p,dur:v}))}>{l}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="calc-group">
+                  <div className="calc-label">Дополнительно</div>
+                  <div className="calc-checks">
+                    {([['dj','Диджей (от 10 000 ₽)'],['cover','Кавер-группа (от 80 000 ₽)'],['photo','Фотограф'],['decor','Декор']] as [keyof CalcState, string][]).map(([k,label]) => (
+                      <label key={k} className="calc-check">
+                        <input type="checkbox" checked={S[k] as boolean} onChange={e => setS(p=>({...p,[k]:e.target.checked}))} style={{position:'absolute',opacity:0}}/>
+                        <span className="chk-box">{S[k] && <svg viewBox="0 0 12 12" style={{width:10,height:10,stroke:'white',fill:'none',strokeWidth:'2.8'}}><polyline points="2 6 5 9 10 3"/></svg>}</span>
+                        <span className="chk-lbl">{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="calc-result">
+                <div className="calc-result-inner">
+                  {S.people === '150+' ? (
+                    <><div className="calc-msg">Для мероприятий 150+ человек подготовим индивидуальный расчёт — ответим в течение часа.</div><button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Запросить расчёт</button></>
+                  ) : !calcResult || calcResult.total < 5000 ? (
+                    <><div className="calc-msg">Выберите параметры выше — примерная стоимость появится здесь.</div><button className="calc-cta" onClick={() => { setModalPrefill(null); setModalOpen(true) }}>Бесплатная консультация</button></>
+                  ) : (
+                    <><div className="calc-range">{fmtRange(Math.round(calcResult.total/1000)*1000, Math.round(calcResult.hi/1000)*1000)}</div><div className="calc-lines">{calcResult.lines.map(([k,v]) => <div key={k} className="calc-line"><span>{k}</span><span>{v}</span></div>)}</div><div className="calc-disclaimer">Итоговая стоимость уточняется после консультации</div><button className="calc-cta" onClick={openModalFromCalc}>Обсудить праздник →</button></>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -503,7 +593,11 @@ export default function Home() {
           <div className="sec-head"><div className="eyebrow">Процесс</div><h2 className="sec-title">5 шагов к вашему празднику</h2></div>
           <div className="steps-row steps-row-5">
             {[['01','Рассказываете о себе','10-минутный звонок. Мечты, бюджет, пожелания.'],['02','Получаете концепцию','За 24 часа — смета и идея праздника.'],['03','Утверждаем детали','Площадка, команда, декор — согласовываем вместе.'],['04','Мы работаем','Вы ждёте праздника. Мы контролируем каждую деталь.'],['05','Ваш день','Мы на месте с утра до конца.']].map(([n,t,d]) => (
-              <div key={n} className="step"><div className="step-num">{n}</div><div className="step-title">{t}</div><div className="step-desc">{d}</div></div>
+              <div key={n} className="step">
+                <div className="step-num">{n}</div>
+                <div className="step-title">{t}</div>
+                <div className="step-desc">{d}</div>
+              </div>
             ))}
           </div>
         </section>
@@ -542,8 +636,6 @@ export default function Home() {
         </section>
       </div>
 
-      {/* CALCULATOR */}
-
       {/* PORTFOLIO */}
       <section className="slideshow" id="slideshow">
         <div className="ss-sticky">
@@ -563,22 +655,19 @@ export default function Home() {
           {/* Brand */}
           <div className="footer-col">
             <div className="footer-logo">
-              <div style={{width:36,height:36,flexShrink:0}}><LogoSvg/></div>
-              <div>
-                <div className="footer-brand-name">Di Event</div>
-                <div className="footer-brand-sub">Event Agency</div>
-              </div>
+              <LogoImg white className="footer-logo-img" />
             </div>
             <p className="footer-desc">Организуем корпоративы, квизы, тимбилдинги и праздники под ключ в Санкт-Петербурге.</p>
             <div className="footer-socials">
-              <a href="https://t.me/K_ket1" target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="footer-social-link">
-                <svg viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+              <a href="https://t.me/K_ket1" target="_blank" rel="noopener noreferrer" className="footer-social-row">
+                <svg viewBox="0 0 24 24" width="26" height="26" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
                   <circle cx="12" cy="12" r="12" fill="#26A5E4"/>
                   <path d="M17.5 7.08L5 11.6c-.8.33-.79.78-.15.98l3.16.98 7.3-4.58c.34-.21.66-.1.4.13l-5.9 5.33-.22 3.24.63-.3 1.51-1.46 3.15 2.31c.58.32.99.15 1.14-.53l2.06-9.7c.21-.85-.32-1.23-.88-.92z" fill="white"/>
                 </svg>
+                <span className="footer-social-label">+7 999 514-97-74</span>
               </a>
-              <a href="https://max.ru/" target="_blank" rel="noopener noreferrer" aria-label="Max" className="footer-social-link">
-                <svg viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+              <a href="https://max.ru/u/f9LHodD0cOIFACAJigh2Ak0N_LhEwusG-snuatbGZUf7mCIikJzruwZptcs" target="_blank" rel="noopener noreferrer" className="footer-social-row">
+                <svg viewBox="0 0 24 24" width="26" height="26" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
                   <defs>
                     <linearGradient id="maxFGr" x1="0" y1="1" x2="1" y2="0">
                       <stop offset="0%" stopColor="#3D9BF7"/>
@@ -589,6 +678,7 @@ export default function Home() {
                   <path d="M12 3.5C7.3 3.5 3.5 7 3.5 11.3c0 2.4 1.1 4.5 2.9 5.9l-.9 3.8 3.8-1.8c.85.2 1.74.3 2.7.3 4.7 0 8.5-3.5 8.5-7.8S16.7 3.5 12 3.5Z" fill="white"/>
                   <circle cx="12" cy="11" r="3.3" fill="url(#maxFGr)"/>
                 </svg>
+                <span className="footer-social-label">+7 999 514-97-74</span>
               </a>
             </div>
           </div>
@@ -607,13 +697,13 @@ export default function Home() {
           {/* CTA */}
           <div className="footer-col">
             <div className="footer-col-title">Обсудить мероприятие</div>
-            <p className="footer-desc">Ответим в течение 15 минут и подберём формат под ваш бюджет.</p>
+            <p className="footer-desc">Организуем ваше мероприятием под ключ.</p>
             <button className="footer-cta" onClick={() => setModalOpen(true)}>Оставить заявку →</button>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <span>© Di Event 2026 · Санкт-Петербург</span>
+          <span>© DIALIFE EVENT 2026 · Санкт-Петербург</span>
         </div>
       </footer>
 

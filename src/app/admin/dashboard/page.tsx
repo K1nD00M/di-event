@@ -71,7 +71,7 @@ export default function Dashboard() {
         <div style={{display:'flex',alignItems:'center',gap:'1rem'}}>
           <div style={{width:34,height:34,background:'#C09530',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',color:'#FFFFFF',fontFamily:'Georgia,serif',fontSize:'1rem'}}>Di</div>
           <div>
-            <div style={{color:'#231508',fontWeight:700,fontSize:'.9rem',letterSpacing:'.05em'}}>Di Event</div>
+            <div style={{color:'#231508',fontWeight:700,fontSize:'.9rem',letterSpacing:'.05em'}}>Dialife Event</div>
             <div style={{color:'#917A60',fontSize:'.6rem',letterSpacing:'.15em',textTransform:'uppercase'}}>Панель управления</div>
           </div>
         </div>

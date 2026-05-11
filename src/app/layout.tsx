@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Di Event — Ивент-агентство в Санкт-Петербурге',
+  title: 'Dialife Event — Ивент-агентство в Санкт-Петербурге',
   description: 'Организуем корпоративы, свадьбы, детские праздники и другие мероприятия в Санкт-Петербурге. Без скрытых комиссий.',
 }
 
